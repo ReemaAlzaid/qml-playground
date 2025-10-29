@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-from utils.qstate_representations import convert_state_vector_to_bloch_vector
+from app.utils.qstate_representations import convert_state_vector_to_bloch_vector
 
 logger = logging.getLogger(" [PLOTLY]")
 

@@ -6,13 +6,12 @@ import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
+from app.utils.qstate_representations import compute_tangle
+
 logger = logging.getLogger(" [PLOTLY]")
 
 
-def compute_concurrence(states):
-    states = np.atleast_2d(states)
-    c = 2 * np.abs(states[:, 0] * states[:, 3] - states[:, 1] * states[:, 2])
-    return c ** 2
+# Using compute_tangle from app.utils.qstate_representations instead
 
 
 def make_tetrahedron(targets=None):
@@ -126,7 +125,7 @@ def make_tetrahedron_state_traces(states, labels, num_classes=None):
         c_states = states[idx]
 
         probs = np.abs(c_states) ** 2
-        concurrences = compute_concurrence(c_states)
+        concurrences = compute_tangle(c_states)
         sizes = min_size + (max_size - min_size) * concurrences
 
         state_trace = go.Scatter3d(
