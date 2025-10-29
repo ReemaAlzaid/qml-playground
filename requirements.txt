@@ -1,5 +1,6 @@
 dash==3.1.1
 gunicorn==23.0.0
+numpy==1.26.4
 pandas==2.2.3
 plotly==6.1.1
 torch==2.7.0
