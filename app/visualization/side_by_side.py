@@ -4,9 +4,9 @@ import numpy as np
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-from app.visualization.single_qubit import make_bloch_sphere, make_bloch_state_traces
-from app.visualization.two_qubits import make_tetrahedron, make_tetrahedron_state_traces
-from app.utils.qstate_representations import convert_state_vector_to_bloch_vector
+from visualization.single_qubit import make_bloch_sphere, make_bloch_state_traces
+from visualization.two_qubits import make_tetrahedron, make_tetrahedron_state_traces
+from utils.qstate_representations import convert_state_vector_to_bloch_vector
 
 logger = logging.getLogger(" [PLOTLY]")
 
@@ -45,7 +45,7 @@ def make_side_by_side_visualization(single_qubit_states=None, two_qubit_states=N
         if single_qubit_states.shape[1] == 2:  # State vectors
             # Convert to Bloch vectors
             bloch_vectors = np.array([
-                convert_state_vector_to_bloch_vector(state) 
+                convert_state_vector_to_bloch_vector(state)
                 for state in single_qubit_states.numpy()
             ])
         else:  # Already Bloch vectors
@@ -53,8 +53,16 @@ def make_side_by_side_visualization(single_qubit_states=None, two_qubit_states=N
     else:
         bloch_vectors = None
     
+    # Convert target state vectors to Bloch vectors if needed
+    bloch_targets = None
+    if single_qubit_targets is not None:
+        bloch_targets = np.array([
+            convert_state_vector_to_bloch_vector(target)
+            for target in single_qubit_targets.numpy()
+        ])
+    
     # Create Bloch sphere traces
-    bloch_traces, bloch_annotations = make_bloch_sphere(targets=single_qubit_targets)
+    bloch_traces, bloch_annotations = make_bloch_sphere(targets=bloch_targets)
     bloch_state_traces = make_bloch_state_traces(bloch_vectors, labels)
     
     # Create Q-simplex (tetrahedron) traces
@@ -186,8 +194,16 @@ def make_side_by_side_model_visualization(single_qubit_states_seq=None, two_qubi
         horizontal_spacing=0.05
     )
     
+    # Convert target state vectors to Bloch vectors if needed
+    bloch_targets = None
+    if single_qubit_targets is not None:
+        bloch_targets = np.array([
+            convert_state_vector_to_bloch_vector(target)
+            for target in single_qubit_targets.numpy()
+        ])
+    
     # Create base traces for Bloch sphere and tetrahedron
-    bloch_traces, bloch_annotations = make_bloch_sphere(targets=single_qubit_targets)
+    bloch_traces, bloch_annotations = make_bloch_sphere(targets=bloch_targets)
     tetra_traces, tetra_annotations = make_tetrahedron(targets=two_qubit_targets)
     
     # Add traces for each layer
@@ -296,7 +312,7 @@ def make_side_by_side_model_visualization(single_qubit_states_seq=None, two_qubi
 # Example usage
 if __name__ == "__main__":
     import torch
-    from app.backends.noise_simulator_mock import NoiseSimulatorMock
+    from backends.noise_simulator_mock import NoiseSimulatorMock
     
     # Create mock data
     simulator = NoiseSimulatorMock(noise_level=0.1, seed=42)

@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-from app.utils.qstate_representations import compute_tangle
+from utils.qstate_representations import compute_tangle
 
 logger = logging.getLogger(" [PLOTLY]")
 
@@ -107,12 +107,38 @@ def make_tetrahedron_state_traces(states, labels, num_classes=None):
         states = np.eye(4)
 
     if labels is None:
-        labels = np.array([0, 1, 2, 3], dtype=np.uint)
+        labels = np.array([0, 1, 2, 3], dtype=np.int32)
     else:
-        labels = labels.values
+        # Handle both pandas Series and torch tensors
+        try:
+            import torch
+            is_torch = isinstance(labels, torch.Tensor)
+        except ImportError:
+            is_torch = False
+        
+        if hasattr(labels, 'values'):
+            # Pandas Series
+            labels = labels.values
+        elif is_torch or str(type(labels).__name__) == 'Tensor':
+            # PyTorch tensor - convert to numpy
+            if hasattr(labels, 'detach'):
+                labels = labels.detach().cpu().numpy()
+            elif hasattr(labels, 'cpu'):
+                labels = labels.cpu().numpy()
+            elif hasattr(labels, 'numpy'):
+                labels = labels.numpy()
+        
+        # Final safety check - ensure it's a numpy array
+        if not isinstance(labels, np.ndarray):
+            try:
+                labels = np.array(list(labels))
+            except TypeError as e:
+                # If labels is not iterable (e.g., a function), use default
+                print(f"WARNING: Could not convert labels to array: {type(labels)}, error: {e}")
+                labels = np.array([0] * len(states), dtype=np.int32)
 
     if num_classes is None:
-        num_classes = int(labels.max()) + 1
+        num_classes = int(np.max(labels)) + 1
 
     min_size = 3
     max_size = 10

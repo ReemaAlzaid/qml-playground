@@ -2,8 +2,8 @@ import numpy as np
 import torch
 import plotly.io as pio
 
-from app.backends.noise_simulator_mock import NoiseSimulatorMock
-from app.visualization.side_by_side import (
+from backends.noise_simulator_mock import NoiseSimulatorMock
+from visualization.side_by_side import (
     make_side_by_side_visualization,
     make_side_by_side_model_visualization
 )
