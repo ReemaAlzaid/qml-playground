@@ -206,7 +206,7 @@ class StateVecSimTorch(nn.Module):
         return final_state
 
     def RX(self, Angles):
-        """
+        r"""
         applies RX gate on qubits.
         RX(\theta) = RZ(-\pi/2) RY(\theta) RZ(\pi/2)
         from https://docs.pennylane.ai/en/stable/_modules/pennylane/ops/qubit/parametric_ops_single_qubit.html#RX
